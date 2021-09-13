@@ -27,11 +27,11 @@ cols <- c("St. Louis City" = values$pal[1], "St. Louis" = values$pal[2],
           "Clinton" = values$pal[5], "St. Clair" = values$pal[6],
           "Jefferson" = values$pal[7], "Madison" = values$pal[8],  
           "Franklin" = values$pal[9], "Lincoln" = values$pal[10],
-          "Jersey" = values$pal[11], "Bond" = values$pal[12])
+          "Warren" = values$pal[11], "Bond" = values$pal[12])
 
 ## define focal counties
 county_focal <- c("29510", "29189", "29183", "17133", "17027", "17163",
-                  "29099", "17119", "29071", "29113", "17083", "17005")
+                  "29099", "17119", "29071", "29113", "29219", "17005")
 
 ## create points
 county_points <- filter(county_data, report_date == values$date) %>%
@@ -154,7 +154,7 @@ county_subset <- filter(county_data, report_date >= values$date-20) %>%
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 10, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 20, f = ceiling)
 
 ## create factors
 county_subset <- mutate(county_subset, factor_var = fct_reorder2(county, report_date, case_avg_rate))
@@ -165,7 +165,7 @@ p <- facet_rate(county_subset,
                 subtype = "St. Louis",
                 pal = cols, 
                 x_breaks = values$date_breaks_3days,
-                y_breaks = 10,
+                y_breaks = 20,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$date-20,

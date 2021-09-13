@@ -71,12 +71,14 @@ county_subset <- filter(county_data, report_date >= values$plot_date) %>%
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## modify Reynolds County
-county_subset <- mutate(county_subset,
-                        case_avg_rate = ifelse(geoid == 29179 & 
-                                                 (report_date == "2020-11-11" | report_date == "2020-11-17"), 200, case_avg_rate),
-                        case_avg_rate = ifelse(geoid == 29179 & 
-                                                 (report_date >= "2020-11-12" & report_date <= "2020-11-16"), NA, case_avg_rate)
-)
+#  county_subset <- mutate(county_subset,
+#                        case_avg_rate = ifelse(geoid == 29179 & 
+#                                                 (report_date == "2020-11-11" | report_date == "2020-11-17"), 200, case_avg_rate),
+#                        case_avg_rate = ifelse(geoid == 29179 & 
+#                                                 (report_date >= "2020-11-12" & report_date <= "2020-11-16"), NA, case_avg_rate)
+# )
+
+# county_subset <- mutate(county_subset, case_avg_rate = ifelse(geoid == 29179 & (report_date == "2020-11-16" | report_date == "2020-11-17"), 250, case_avg_rate))
 
 ## define top_val
 top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 50, f = ceiling)
@@ -105,9 +107,9 @@ p <- facet_rate(county_subset,
                 plot_date = values$plot_date,
                 date = values$date,
                 title = "Pace of New COVID-19 Cases in Select Missouri Counties",
-                caption = paste0(values$caption_text_census,"\nValues above 200 for Reynolds County truncated to increase readability"))
-                  
-                  # values$caption_text_census
+                caption = values$caption_text_census)
+                   # paste0(values$caption_text_census,"\nValues above 250 for Reynolds County truncated to increase readability")
+                  # 
 
 ## save plot
 save_plots(filename = "results/high_res/county_ozkmtns/e_new_case.png", plot = p, preset = "lg")
