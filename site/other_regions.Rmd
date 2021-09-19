@@ -40,10 +40,6 @@ west <- filter(county_data, geoid %in% regional_geoids$west)
 rm(county_data, regional_geoids)
 ```
 
-<div class="alert">
-<b>As of 2020-11-14, counties formerly on the "Northern Missouri" plots have been split into "Northern" and "Northeastern" plots. Additional counties have been added to the "Lake of the Ozarks and South-Central Missouri," "Southwest Missouri," "St. Joseph and Northwestern Missouri," and "West-Central Missouri" plots.</b>
-</div>
-
 The following plots focus on a number of regions around Missouri. Unlike the pages for [St. Louis](stl.html) and [Kansas City](kc.html), these regions do not encompass officially designated regions. Rather, they attempt to group counties together based on geographic proximity.
 
 ## Cape Girardeau {.tabset .tabset-fade .tabset-pills .padtop}
