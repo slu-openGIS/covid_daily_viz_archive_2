@@ -3,8 +3,13 @@
 #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===#
 
 # load data ####
-metro_hosp <- read_csv("data/MO_HEALTH_Covid_Tracking/data/metro_all/metro_hospital.csv")
-region_hosp <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso_hospital.csv")
+metro_hosp <- read_csv("data/MO_HEALTH_Covid_Tracking/data/metro_all/metro_hospital.csv") %>%
+  filter(report_date >= "2020-07-17") %>%
+  mutate(covid_per_cap = as.numeric(covid_per_cap))
+
+region_hosp <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso_hospital.csv") %>%
+  filter(report_date >= "2020-07-17") %>%
+  mutate(covid_per_cap = as.numeric(covid_per_cap))
 
 #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===#
 
