@@ -142,7 +142,7 @@ metro_hosp %>%
   select(report_date, short_name, adult_covid, covid_per_cap) %>%
   mutate(
     adult_covid = round(adult_covid, digits = 2),
-    covid_per_cap = round(covid_per_cap, digits = 2)
+    covid_per_cap = round(as.numeric(covid_per_cap), digits = 2)
   ) %>%
   rename(
     `Report Date` = report_date,
