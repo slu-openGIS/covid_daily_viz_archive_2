@@ -72,12 +72,13 @@ county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0,
 
 ## modify Audrain, Moniteau, Osage counties
 county_subset %>%
-  mutate(case_avg_rate = ifelse(geoid == 29075 & 
-                                  (report_date == "2020-11-14" | report_date == "2020-11-15"), 160, case_avg_rate)) %>% 
-  mutate(case_avg_rate = ifelse(geoid == 29147 &  report_date == "2020-11-16", 160, case_avg_rate)) %>%
-  mutate(case_avg_rate = ifelse(geoid == 29087 &
-                                  (report_date == "2020-11-22" | report_date == "2020-11-24"), 160, case_avg_rate)) %>%
-  mutate(case_avg_rate = ifelse(geoid == 29087 &  report_date == "2020-11-23", NA, case_avg_rate)) -> county_subset
+  mutate(case_avg_rate = ifelse(geoid == 29075 & report_date == "2020-11-14", 180, case_avg_rate)) -> county_subset
+  # mutate(case_avg_rate = ifelse(geoid == 29075 & 
+  #                                (report_date == "2020-11-14" | report_date == "2020-11-15"), 160, case_avg_rate)) %>% 
+  ## mutate(case_avg_rate = ifelse(geoid == 29147 &  report_date == "2020-11-16", 160, case_avg_rate)) %>%
+  # mutate(case_avg_rate = ifelse(geoid == 29087 &
+  #                                (report_date == "2020-11-22" | report_date == "2020-11-24"), 160, case_avg_rate)) %>%
+  # mutate(case_avg_rate = ifelse(geoid == 29087 &  report_date == "2020-11-23", NA, case_avg_rate)) -> county_subset
 
 ## define top_val
 top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 20, f = ceiling)
@@ -106,7 +107,9 @@ p <- facet_rate(county_subset,
                 plot_date = values$plot_date,
                 date = values$date,
                 title = "Pace of New COVID-19 Cases in Select Missouri Counties",
-                caption = paste0(values$caption_text_census,"\nValues above 160 for Holt, Gentry, and Nodaway counties truncated to increase readability"))
+                caption = paste0(values$caption_text_census,"\nValues above 180 for Gentry County truncated to increase readability"))
+
+# "\nValues above 160 for Holt, Gentry, and Nodaway counties truncated to increase readability"
 
 ## save plot
 save_plots(filename = "results/high_res/county_stjo/e_new_case.png", plot = p, preset = "lg")
