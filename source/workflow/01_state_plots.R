@@ -87,7 +87,7 @@ save_plots(filename = "results/low_res/state/e_new_case.png", plot = p, preset =
 state_subset <- filter(state_data, report_date >= values$plot_date)
 
 ## define top_val
-top_val <- round_any(x = max(state_subset$mortality_rate), accuracy = 10, f = ceiling)
+top_val <- round_any(x = max(state_subset$mortality_rate), accuracy = 20, f = ceiling)
 
 ## create factors
 state_subset <- mutate(state_subset, factor_var = fct_reorder2(state, report_date, mortality_rate))
@@ -100,7 +100,7 @@ p <- ggplot() +
              size = 4, show.legend = FALSE) +
   scale_colour_manual(values = cols, name = "State") +
   scale_x_date(date_breaks = values$date_breaks, date_labels = "%b") +
-  scale_y_continuous(limits = c(0,top_val), breaks = seq(0, top_val, by = 10)) +
+  scale_y_continuous(limits = c(0,top_val), breaks = seq(0, top_val, by = 20)) +
   labs(
     title = "Reported COVID-19 Mortality by State",
     subtitle = paste0(as.character(values$plot_date), " through ", as.character(values$date)),
