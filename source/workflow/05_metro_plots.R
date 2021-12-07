@@ -104,7 +104,8 @@ p <- ggplot(data = metro_subset) +
 metro_subset <- filter(metro_data, report_date >= values$plot_date) %>%
   filter(report_date < as.Date("2021-01-11") | report_date >= as.Date("2021-01-18")) %>%
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
-  filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24"))
+  filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
+  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-05"))
 
 ## address negative values
 metro_subset <- mutate(metro_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))

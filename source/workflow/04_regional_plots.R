@@ -8,7 +8,8 @@ region_data <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso.c
                         )) %>%
   filter(report_date < as.Date("2021-01-11") | report_date >= as.Date("2021-01-18")) %>%
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
-  filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24"))
+  filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
+  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-05"))
 
 #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===#
 
