@@ -9,7 +9,7 @@ region_data <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso.c
   filter(report_date < as.Date("2021-01-11") | report_date >= as.Date("2021-01-18")) %>%
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
   filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
-  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-05"))
+  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06"))
 
 #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===#
 
@@ -28,8 +28,8 @@ state_values <- list(
     filter(region == "Missouri") %>% 
     pull(var = case_avg) %>% 
     max(),
-  peak_x = -90, # 0
-  peak_y = -140, # 400
+  peak_x = -120, # 0
+  peak_y = 200, # 400
   current_x = 0, # -105
   current_y = values$state_current_y, # 1000
   current_display = TRUE
@@ -55,10 +55,10 @@ stl_values <- list(
     filter(region == "St. Louis") %>% 
     pull(var = case_avg) %>% 
     max(),
-  peak_x = -110, 
+  peak_x = -140, 
   peak_y = 500, 
   current_x = values$regional_current_x, 
-  current_y = -1000,
+  current_y = -2000,
   current_display = TRUE
 )
 
@@ -82,10 +82,10 @@ kc_values <- list(
     filter(region == "Kansas City") %>% 
     pull(var = case_avg) %>% 
     max(),
-  peak_x = -125, 
+  peak_x = -150, 
   peak_y = 1200, 
   current_x = values$regional_current_x, 
-  current_y = -1000,
+  current_y = -2000,
   current_display = TRUE
 )
 
@@ -109,7 +109,7 @@ os_values <- list(
     filter(region == "Outstate") %>% 
     pull(var = case_avg) %>% 
     max(),
-  peak_x = -100, 
+  peak_x = -130, 
   peak_y = 200, 
   current_x = values$regional_current_x, 
   current_y = -2000,
@@ -149,7 +149,6 @@ top_val <- round_any(x = max(region_subset$case_avg_rate), accuracy = 20, f = ce
 p <- ggplot() +
   geom_area(region_subset, mapping = aes(x = report_date, y = case_avg_rate, fill = region),
             show.legend = FALSE) +
-  geom_vline(xintercept = as.Date("2021-03-08"), lwd = .8) +
   scale_fill_manual(values = cols) +
   facet_wrap(vars(region), nrow = 3) +
   scale_x_date(date_breaks = values$date_breaks_long, date_labels = "%b") +

@@ -56,7 +56,7 @@ save_plots(filename = "results/low_res/state/b_case_rate.png", plot = p, preset 
 state_subset <- filter(state_data, report_date >= values$plot_date) %>%
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
   filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
-  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-05"))
+  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06"))
 
 ## define top_val
 top_val <- round_any(x = max(state_subset$case_avg_rate), accuracy = 10, f = ceiling)

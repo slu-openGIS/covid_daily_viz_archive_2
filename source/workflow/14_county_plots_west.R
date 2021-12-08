@@ -65,7 +65,7 @@ county_subset <- filter(county_data, report_date >= values$plot_date) %>%
   filter(geoid %in% county_focal) %>%
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
   filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
-  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-05"))
+  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06"))
 
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
@@ -118,13 +118,13 @@ save_plots(filename = "results/low_res/county_west/e_new_case.png", plot = p, pr
 ## subset data
 county_subset <- filter(county_data, report_date >= values$date-20) %>%
   filter(geoid %in% county_focal) %>%
-  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-05"))
+  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06"))
 
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 10, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 20, f = ceiling)
 
 ## re-order counties
 counties <- unique(county_subset$county)
@@ -144,7 +144,7 @@ p <- facet_rate(county_subset,
                 subtype = "West-Central",
                 pal = cols, 
                 x_breaks = values$date_breaks_3days,
-                y_breaks = 10,
+                y_breaks = 20,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$date-20,

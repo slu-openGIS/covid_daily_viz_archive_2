@@ -11,21 +11,40 @@ regional_count <- function(.data, region, point_data, state_data, region_data, p
     region_label <- "Outstate Focus\n"
   }
   
-  # create antigen label
-  label <- tibble(
-    report_date = as.Date("2021-03-08"),
-    y_val = state_data$top_val-30,
-    text = "Antigen tests added to most\nMissouri counties on 8 Mar"
-  )
+  # create ribbon objects
+  state_error1 <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso.csv",
+                            col_types = cols(region = col_character()
+                            )) %>%
+    filter(report_date == as.Date("2021-01-10") | report_date == as.Date("2021-01-19")) %>%
+    filter(region == "Missouri")
+  
+  state_error2 <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso.csv",
+                            col_types = cols(region = col_character()
+                            )) %>%
+    filter(report_date == as.Date("2021-03-07") | report_date == as.Date("2021-03-16")) %>%
+    filter(region == "Missouri")
+  
+  state_error3 <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso.csv",
+                            col_types = cols(region = col_character()
+                            )) %>%
+    filter(report_date == as.Date("2021-04-15") | report_date == as.Date("2021-04-25")) %>%
+    filter(region == "Missouri")
+  
+  state_error4 <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso.csv",
+                            col_types = cols(region = col_character()
+                            )) %>%
+    filter(report_date == as.Date("2021-11-16") | report_date == as.Date("2021-12-06")) %>%
+    filter(region == "Missouri")
   
   # construct plot
   p <- ggplot() +
+    geom_area(data = state_error1, mapping = aes(x = report_date, y = case_avg), alpha = .45) +
+    geom_area(data = state_error2, mapping = aes(x = report_date, y = case_avg), alpha = .45) +
+    geom_area(data = state_error3, mapping = aes(x = report_date, y = case_avg), alpha = .45) +
+    geom_area(data = state_error4, mapping = aes(x = report_date, y = case_avg), alpha = .45) +
     geom_line(.data, mapping = aes(x = report_date, y = case_avg, color = factor_var), size = 2) +
     geom_point(data = point_data, mapping = aes(x = report_date, y = case_avg, color = factor_var), 
                size = 4, show.legend = FALSE) +
-    geom_vline(xintercept = as.Date("2021-03-08"), lwd = .8) +
-    geom_label_repel(data = label, mapping = aes(x = report_date, y = y_val, label = text),
-                    nudge_y = 100, nudge_x = -85, size = 5) +
     geom_point(data = state_data$peak_tbl, mapping = aes(x = report_date, y = case_avg), 
                size = 4, shape = 16) +
     geom_point(data = region_data$peak_tbl, mapping = aes(x = report_date, y = case_avg), 
@@ -40,7 +59,7 @@ regional_count <- function(.data, region, point_data, state_data, region_data, p
     labs(
       title = "Pace of New COVID-19 Cases in Missouri",
       subtitle = paste0(region_label, as.character(plot_data$plot_date), " through ", as.character(plot_data$date)),
-      caption = plot_data$caption_text,
+      caption = paste0(plot_data$caption_text, "\nShaded areas represent smoothed lines to address data reporting issues"),
       x = "Date",
       y = "7-day Average of New Cases"
     ) +
@@ -96,68 +115,13 @@ facet_rate <- function(.data, type, subtype = NULL, pal, x_breaks, y_breaks, y_u
     p <- p + gghighlight(state %in% highlight, use_direct_label = FALSE, use_group_by = FALSE)
   }
     
-  # add vertical line
-  if (type == "metro"){
-    
-    p <- p + geom_vline(xintercept = as.Date("2021-03-08"), lwd = .8)
-    
-  } else if (type == "state"){
-    
-    # create data frame
-    vline_df <- data.frame(
-      report_date = as.Date("2021-03-08"),
-      state = "Missouri"
-    )
-    
-    # add line
-    p <- p + geom_vline(data = vline_df, mapping = aes(xintercept = report_date), lwd = .8)
-    
-  } else if(type == "county"){
-    
-    if (subtype == "Kansas City"){
-      
-      # create data frame
-      vline_df <- data.frame(
-        report_date = rep(as.Date("2021-03-08"), 9),
-        county = c("Bates", "Cass", "Clay", "Clinton", "Jackson",
-                   "Kansas City", "Lafayette", "Platte", "Ray")
-      )
-      
-      # add line
-      p <- p + geom_vline(data = vline_df, mapping = aes(xintercept = report_date), lwd = .8)
-      
-    } else if (subtype == "St. Louis"){
-      
-      # create data frame
-      vline_df <- data.frame(
-        report_date = rep(as.Date("2021-03-08"), 6),
-        county = c("Franklin", "Jefferson", "Lincoln", "St. Charles", 
-                   "St. Louis", "St. Louis City")
-      )
-      
-      # add line
-      p <- p + geom_vline(data = vline_df, mapping = aes(xintercept = report_date), lwd = .8)
-      
-    } else {
-      
-      p <- p + geom_vline(xintercept = as.Date("2021-03-08"), lwd = .8)
-      
-    }
-    
-  }
-  
+ 
   if (type == "metro HHS"){
     y_string <- "COVID Patients per 1,000 Staffed Beds"
     caption_string <- caption
   } else if (type != "metro HHS"){
     y_string <- "7-Day Average Rate per 100,000"
-    
-    if (last3 == FALSE){
-      caption_string <- paste0(caption,"\nVertical line represents addition of antigen test data for most Missouri counties on 2021-03-08")
-    } else if (last3 == TRUE){
-      caption_string <- caption
-    }
-    
+    caption_string <- caption
   }
   
   if (last3 == FALSE){
@@ -291,23 +255,9 @@ cumulative_rate <- function(.data, point_data, type, subtype = NULL, plot_values
     scale_name <- "State"
   }
   
-  if (type == "metro" | type == "county"){
-    
-    label <- tibble(
-      report_date = as.Date("2021-03-08"),
-      y_val = top_val-5,
-      text = "Antigen tests added to most counties on 2021-03-08"
-    )
-    
-  } else if (type == "state"){
+  if (type == "state"){
     
     plot_values$county_rate_val <- 1000
-    
-    label <- tibble(
-      report_date = as.Date("2021-03-08"),
-      y_val = top_val-600,
-      text = "Antigen tests added to most Missouri counties on 2021-03-08"
-    )
     
   }
   
@@ -326,9 +276,6 @@ cumulative_rate <- function(.data, point_data, type, subtype = NULL, plot_values
   
   # finish plot
   p <- p + 
-    geom_vline(xintercept = as.Date("2021-03-08"), lwd = .8) +
-    geom_text_repel(data = label, mapping = aes(x = report_date, y = y_val, label = text),
-                    nudge_y = 100, nudge_x = -160, size = 5) +
     scale_colour_manual(values = pal, name = scale_name) +
     scale_x_date(date_breaks = plot_values$date_breaks, date_labels = "%b") +
     scale_y_continuous(limits = c(0,y_upper_limit), breaks = seq(0, y_upper_limit, by = plot_values$county_rate_val)) + 
