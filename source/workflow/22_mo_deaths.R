@@ -3,7 +3,9 @@
 # =============================================================================
 
 # load data
-mo_deaths <-  read_csv("data/MO_HEALTH_Covid_Tracking/data/state/mo_deaths.csv")
+mo_deaths <-  read_csv("data/MO_HEALTH_Covid_Tracking/data/state/mo_deaths.csv") %>%
+  filter(value %in% c("Total Deaths", "Reported Deaths")) %>%
+  mutate(value = ifelse(value == "Total Deaths", "Deaths, Actual", "Deaths, Reported"))
 
 # =============================================================================
 
@@ -17,6 +19,16 @@ cols <- c("Deaths, Actual" = pal[1], "Deaths, Reported" = pal[2])
 mo_deaths <- filter(mo_deaths, date <= max(unique(mo_deaths$date-14))) %>%
   filter(lubridate::year(date) >= "2020")
 
+## create death counts
+total_deaths <- mo_deaths %>%
+  group_by(value) %>%
+  summarise(count = sum(count, na.rm = TRUE))
+
+## remove data dump in late November
+mo_deaths <- mo_deaths %>%
+  filter(value == "Deaths, Actual" | 
+           (value == "Deaths, Reported" & (date < as.Date("2021-11-18") | date > as.Date("2021-11-24"))))
+
 ## define top_val
 top_val <- round_any(x = max(mo_deaths$avg, na.rm = TRUE), accuracy = 5, f = ceiling)
 
@@ -28,11 +40,6 @@ death_points <- mo_deaths %>%
 ## create factors
 mo_deaths <- mutate(mo_deaths, factor_var = fct_reorder2(value, date, avg))
 death_points <- mutate(death_points, factor_var = fct_reorder2(value, date, avg))
-
-## create death counts
-total_deaths <- mo_deaths %>%
-  group_by(value) %>%
-  summarise(count = sum(count, na.rm = TRUE))
 
 ## create deaths actual only
 actual_deaths <- filter(mo_deaths, value == "Deaths, Actual")
