@@ -13,7 +13,7 @@ date <- Sys.Date()
 
 #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===#
 
-# copy images into site root directory1
+# copy images into site root directory
 dir_copy(path = "results/low_res", new_path = "site/img/", overwrite = TRUE) 
 
 # build site
