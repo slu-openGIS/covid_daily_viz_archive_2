@@ -14,12 +14,12 @@ system("git submodule update --remote")
 #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===#
 
 # UPDATE date value
-date <- Sys.Date()-1
+date <- Sys.Date()
 
 # define first date for plotting
 test_date_breaks <- "20 days"
 total_test_date_breaks <- "20 days"
-hosp_breaks <- "1 month"
+hosp_breaks <- "2 months"
 x_angle <- 25
 
 # create caption
