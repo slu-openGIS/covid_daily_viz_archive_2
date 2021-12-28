@@ -64,7 +64,8 @@ county_subset <- filter(county_data, report_date >= values$plot_date) %>%
   filter(geoid %in% county_focal) %>%
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
   filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
-  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06"))
+  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06")) %>%
+  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27"))
 
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
@@ -119,7 +120,7 @@ save_plots(filename = "results/low_res/county_semo/e_new_case.png", plot = p, pr
 ## subset data
 county_subset <- filter(county_data, report_date >= values$date-20) %>%
   filter(geoid %in% county_focal) %>%
-  filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06"))
+  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27"))
 
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
