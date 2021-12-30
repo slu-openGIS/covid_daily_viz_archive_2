@@ -56,11 +56,11 @@ stl_values <- list(
     filter(region == "St. Louis") %>% 
     pull(var = case_avg) %>% 
     max(),
-  peak_x = -140, 
-  peak_y = 500, 
+  peak_x = -170, 
+  peak_y = 1600, 
   current_x = values$regional_current_x, 
   current_y = -2000,
-  current_display = TRUE
+  current_display = FALSE
 )
 
 ## tables
@@ -83,11 +83,11 @@ kc_values <- list(
     filter(region == "Kansas City") %>% 
     pull(var = case_avg) %>% 
     max(),
-  peak_x = -150, 
-  peak_y = 1200, 
+  peak_x = -170, 
+  peak_y = 2600, 
   current_x = values$regional_current_x, 
   current_y = -2000,
-  current_display = TRUE
+  current_display = FALSE
 )
 
 ## tables
