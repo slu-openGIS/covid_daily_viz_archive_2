@@ -263,6 +263,50 @@ save_plots(filename = "results/low_res/stl_metro/r_inpt_mortality.png", plot = p
 
 # =============================================================================
 
+# plot ratio of icu/vent to all patients
+
+## define colors
+pal <- brewer.pal(n = 4, name = "Set1")
+cols <- c("ICU" = pal[3], "Ventialed" = pal[4])
+
+## calculate ratios
+stl_hosp %>%
+  mutate(icu_pct = icu_avg/in_pt_avg*100) %>%
+  mutate(vent_pct = vent_avg/in_pt_avg*100) %>%
+  select(report_date, icu_pct, vent_pct) %>%
+  pivot_longer(cols = c("icu_pct", "vent_pct"), names_to = "category", 
+               values_to = "value") %>%
+  filter(is.na(value) == FALSE) %>%
+  mutate(category = case_when(
+    category == "icu_pct" ~ "ICU",
+    category == "vent_pct" ~ "Ventialed"
+  )) -> stl_hosp
+
+## define top_val
+top_val <- round_any(x = max(stl_hosp$value, na.rm = TRUE), accuracy = 5, f = ceiling)
+
+## plot
+p <- ggplot() +
+  geom_line(stl_hosp, mapping = aes(x = report_date, y = value, color = category), size = 2) +
+  scale_colour_manual(values = cols, name = "Measure") +
+  scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+  scale_y_continuous(limits = c(0, top_val), breaks = seq(0, top_val, by = 5)) +
+  labs(
+    title = "COVID-19 Critical Care Patient Ratios in Metro St. Louis",
+    subtitle = paste0("St. Louis Metropolitan Pandemic Task Force Hospitals\n", min(stl_subset$report_date), " through ", as.character(date)),
+    x = "Date",
+    y = "Percent of All In-Patients",
+    caption = "Plot by Christopher Prener, Ph.D.\nData via the St. Louis Metro Parademic Task Force"
+  ) +
+  sequoia_theme(base_size = 22, background = "white") +
+  theme(axis.text.x = element_text(angle = x_angle))
+
+## save plot
+save_plots(filename = "results/high_res/stl_metro/u_inpt_ratio.png", plot = p, preset = "lg")
+save_plots(filename = "results/low_res/stl_metro/u_inpt_ratio.png", plot = p, preset = "lg", dpi = 72)
+
+# =============================================================================
+
 # load data
 stl_hosp <-  read_csv("data/MO_HEALTH_Covid_Tracking/data/metro/stl_hospital_peds.csv")
 
@@ -301,7 +345,7 @@ stl_hosp %>%
 avg_line <- filter(stl_subset, category == "7-day Average")
 
 ## define top_val
-top_val <- round_any(x = max(stl_subset$value, na.rm = TRUE), accuracy = 5, f = ceiling)
+top_val <- round_any(x = max(stl_subset$value, na.rm = TRUE), accuracy = 10, f = ceiling)
 
 ## plot
 p <- ggplot() +
@@ -309,7 +353,7 @@ p <- ggplot() +
   geom_line(avg_line, mapping = aes(x = report_date, y = value), color = cols[1], size = 2) +
   scale_colour_manual(values = cols, name = "Measure") +
   scale_x_date(date_breaks = "1 month", date_labels = "%b") +
-  scale_y_continuous(limits = c(0, top_val), breaks = seq(0, top_val, by = 5)) +
+  scale_y_continuous(limits = c(0, top_val), breaks = seq(0, top_val, by = 10)) +
   facet_wrap(vars(facet), nrow = 3) + 
   labs(
     title = "COVID-19 Pediatric Patients in Metro St. Louis",
