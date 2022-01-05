@@ -67,36 +67,42 @@ county_subset <- filter(county_data, report_date >= values$plot_date) %>%
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
   filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
   filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06")) %>%
-  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27"))
+  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27")) %>%
+  filter(report_date < as.Date("2021-12-31") | report_date >= as.Date("2022-01-03"))
 
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## modify Livingston and Sullivan and Putnam counties
-county_subset <- mutate(county_subset,
-                        case_avg_rate = ifelse(geoid == 29117 & 
-                                                 (report_date == "2020-09-04" | report_date == "2020-09-10"), 160, case_avg_rate),
-                        case_avg_rate = ifelse(geoid == 29117 & 
-                                                 (report_date >= "2020-09-05" & report_date <= "2020-09-09"), NA, case_avg_rate)
-)
+# county_subset <- mutate(county_subset,
+#                        case_avg_rate = ifelse(geoid == 29117 & 
+#                                                 (report_date == "2020-09-04" | report_date == "2020-09-10"), 160, case_avg_rate),  # 195-251
+#                        case_avg_rate = ifelse(geoid == 29117 & 
+#                                                 (report_date >= "2020-09-05" & report_date <= "2020-09-09"), NA, case_avg_rate))
 
 county_subset <- mutate(county_subset,
-                        case_avg_rate = ifelse(geoid == 29211 & 
-                                                 (report_date == "2020-10-30" | report_date == "2020-11-06"), 160, case_avg_rate),
-                        case_avg_rate = ifelse(geoid == 29211 & 
-                                                 (report_date >= "2020-10-31" & report_date <= "2020-11-05"), NA, case_avg_rate)
-)
+                        case_avg_rate = ifelse(geoid == 29117 & 
+                                                 (report_date == "2020-09-05" | report_date == "2020-09-10"), 200, case_avg_rate),  # 195-251
+                        case_avg_rate = ifelse(geoid == 29117 & 
+                                                 (report_date >= "2020-09-06" & report_date <= "2020-09-09"), NA, case_avg_rate))
 
-county_subset <- mutate(county_subset,
-                        case_avg_rate = ifelse(geoid == 29171 & 
-                                                 (report_date == "2021-05-27" | report_date == "2021-05-28" |
-                                                    report_date == "2021-06-05" | report_date == "2021-06-11"), 160, case_avg_rate),
-                        case_avg_rate = ifelse(geoid == 29171 & 
-                                                 (report_date >= "2021-06-06" & report_date <= "2021-06-10"), NA, case_avg_rate)
-)
+# county_subset <- mutate(county_subset,
+#                        case_avg_rate = ifelse(geoid == 29211 & 
+#                                                 (report_date == "2020-10-30" | report_date == "2020-11-06"), 160, case_avg_rate), # 160-183
+#                        case_avg_rate = ifelse(geoid == 29211 & 
+#                                                 (report_date >= "2020-10-31" & report_date <= "2020-11-05"), NA, case_avg_rate))
+
+# county_subset <- mutate(county_subset,
+#                        case_avg_rate = ifelse(geoid == 29171 & 
+#                                                 (report_date == "2021-05-27" | report_date == "2021-05-28" |
+#                                                    report_date == "2021-06-05" | report_date == "2021-06-11"), 160, case_avg_rate), # 160-205
+#                        case_avg_rate = ifelse(geoid == 29171 & 
+#                                                 (report_date >= "2021-06-06" & report_date <= "2021-06-10"), NA, case_avg_rate))
+
+county_subset <- mutate(county_subset, case_avg_rate = ifelse(geoid == 29171 & report_date == "2021-06-09", 200, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 20, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 25, f = ceiling)
 
 ## re-order counties
 counties <- unique(county_subset$county)
@@ -116,13 +122,15 @@ p <- facet_rate(county_subset,
                 subtype = "Northern",
                 pal = cols, 
                 x_breaks = values$date_breaks_facet,
-                y_breaks = 20,
+                y_breaks = 25,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$plot_date,
                 date = values$date,
                 title = "Pace of New COVID-19 Cases in Select Missouri Counties",
-                caption = paste0(values$caption_text_census,"\nValues above 160 for Livingston, Putnam, and Sullivan counties truncated to increase readability"))
+                caption = paste0(values$caption_text_census,"\nValues above 200 for Livingston and Putnam counties truncated to increase readability"))
+
+# paste0(values$caption_text_census,"\nValues above 160 for Livingston, Putnam, and Sullivan counties truncated to increase readability")
 
 ## save plot
 save_plots(filename = "results/high_res/county_nomo/e_new_case.png", plot = p, preset = "lg")
@@ -135,13 +143,14 @@ save_plots(filename = "results/low_res/county_nomo/e_new_case.png", plot = p, pr
 ## subset data
 county_subset <- filter(county_data, report_date >= values$date-20) %>%
   filter(geoid %in% county_focal) %>%
-  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27"))
+  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27")) %>%
+  filter(report_date < as.Date("2021-12-31") | report_date >= as.Date("2022-01-03"))
 
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 20, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 25, f = ceiling)
 
 ## re-order counties
 counties <- unique(county_subset$county)
@@ -161,7 +170,7 @@ p <- facet_rate(county_subset,
                 subtype = "Northern",
                 pal = cols, 
                 x_breaks = values$date_breaks_3days,
-                y_breaks = 20,
+                y_breaks = 25,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$date-20,

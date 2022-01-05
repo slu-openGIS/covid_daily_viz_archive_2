@@ -10,7 +10,8 @@ region_data <- read_csv("data/MO_HEALTH_Covid_Tracking/data/region/region_meso.c
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
   filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
   filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06")) %>%
-  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27"))
+  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27")) %>%
+  filter(report_date < as.Date("2021-12-31") | report_date >= as.Date("2022-01-03"))
 
 #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===# #===#
 
@@ -33,7 +34,7 @@ state_values <- list(
   peak_y = 200, # 400
   current_x = 0, # -105
   current_y = values$state_current_y, # 1000
-  current_display = TRUE
+  current_display = FALSE
 )
 
 ## tables
@@ -56,8 +57,8 @@ stl_values <- list(
     filter(region == "St. Louis") %>% 
     pull(var = case_avg) %>% 
     max(),
-  peak_x = -170, 
-  peak_y = 1600, 
+  peak_x = -120, 
+  peak_y = 800, 
   current_x = values$regional_current_x, 
   current_y = -2000,
   current_display = FALSE
@@ -144,7 +145,7 @@ region_data %>%
   mutate(region = fct_relevel(region, "St. Louis", "Kansas City", "Outstate")) -> region_subset
 
 ## define top_val
-top_val <- round_any(x = max(region_subset$case_avg_rate), accuracy = 20, f = ceiling)
+top_val <- round_any(x = max(region_subset$case_avg_rate), accuracy = 25, f = ceiling)
 
 ## construct plot
 p <- ggplot() +
@@ -153,11 +154,11 @@ p <- ggplot() +
   scale_fill_manual(values = cols) +
   facet_wrap(vars(region), nrow = 3) +
   scale_x_date(date_breaks = values$date_breaks_long, date_labels = "%b") +
-  scale_y_continuous(limits = c(0,top_val), breaks = seq(0, top_val, by = 20)) + 
+  scale_y_continuous(limits = c(0,top_val), breaks = seq(0, top_val, by = 25)) + 
   labs(
     title = "Pace of New COVID-19 Cases in Missouri by Region",
     subtitle = paste0(as.character(values$plot_date), " through ", as.character(values$date)),
-    caption = paste0(values$caption_text, "\nVertical line represents addition of antigen test data for most Missouri counties on 2021-03-08"),
+    caption = values$caption_text,
     x = "Date",
     y = "7-day Average of New Cases per 100,000"
   ) +

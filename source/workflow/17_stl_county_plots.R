@@ -100,16 +100,16 @@ county_subset <- filter(county_data, report_date >= values$plot_date) %>%
   filter(report_date < as.Date("2021-03-08") | report_date >= as.Date("2021-03-15")) %>%
   filter(report_date < as.Date("2021-04-17") | report_date >= as.Date("2021-04-24")) %>%
   filter(report_date < as.Date("2021-11-17") | report_date >= as.Date("2021-12-06")) %>%
-  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27"))
+  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27")) %>%
+  filter(report_date < as.Date("2021-12-31") | report_date >= as.Date("2022-01-03"))
 
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## modify Calhoun, Clinton, and Jersey counties
-county_subset %>%
+# county_subset %>%
   # mutate(case_avg_rate = ifelse(geoid == 17027 & report_date == "2020-11-20", 160, case_avg_rate)) %>%  # ~160
   # mutate(case_avg_rate = ifelse(geoid == 17027 & report_date == "2020-11-26", 160, case_avg_rate)) %>%  # ~170
-  mutate(case_avg_rate = ifelse(geoid == 17083 & (report_date == "2020-11-11" | report_date == "2020-11-12"), 180, case_avg_rate)) -> county_subset # %>%  # ~190
   # mutate(case_avg_rate = ifelse(geoid == 17083 & 
   #                                (report_date == "2020-11-08" | report_date == "2020-11-12"), 160, case_avg_rate), # ~160-190
   #       case_avg_rate = ifelse(geoid == 17083 & 
@@ -122,7 +122,7 @@ county_subset %>%
   # ) -> county_subset
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 20, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 50, f = ceiling)
 
 ## create factors
 county_subset <- mutate(county_subset, factor_var = fct_reorder2(county, report_date, case_avg_rate))
@@ -133,7 +133,7 @@ p <- facet_rate(county_subset,
                 subtype = "St. Louis",
                 pal = cols, 
                 x_breaks = values$date_breaks_facet,
-                y_breaks = 20,
+                y_breaks = 50,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$plot_date,
@@ -154,13 +154,14 @@ save_plots(filename = "results/low_res/stl_metro/e_new_case.png", plot = p, pres
 ## subset data
 county_subset <- filter(county_data, report_date >= values$date-20) %>%
   filter(geoid %in% county_focal) %>%
-  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27"))
+  filter(report_date < as.Date("2021-12-24") | report_date >= as.Date("2021-12-27")) %>%
+  filter(report_date < as.Date("2021-12-31") | report_date >= as.Date("2022-01-03"))
 
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 20, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 50, f = ceiling)
 
 ## create factors
 county_subset <- mutate(county_subset, factor_var = fct_reorder2(county, report_date, case_avg_rate))
@@ -171,7 +172,7 @@ p <- facet_rate(county_subset,
                 subtype = "St. Louis",
                 pal = cols, 
                 x_breaks = values$date_breaks_3days,
-                y_breaks = 20,
+                y_breaks = 50,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$date-20,

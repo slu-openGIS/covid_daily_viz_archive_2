@@ -27,12 +27,12 @@ values <- list(
   date = Sys.Date()-1,
   
   plot_date = "2020-03-10",
-  date_breaks = "1 month",
+  date_breaks = "2 months",
   date_breaks_hosp = "2 months",
   date_breaks_long = "1 month",
   date_breaks_log = 50,
-  date_breaks_facet = "3 months",
-  date_breaks_3days = "1 week", #  7 days
+  date_breaks_facet = "4 months",
+  date_breaks_3days = "7 days", #  1 week
   x_angle = 25,
   
   county_log_max = 100000,
@@ -72,7 +72,7 @@ rm(pal)
 
 ## build
 regional_geoids <- list(
-  cape = c("29031", "29157", "29186",  "29187", "29017", "29221", "29123", "29055", "29093"),
+  cape = c("29157", "29186",  "29187", "29017", "29221", "29123", "29055", "29093"), # "29031",
   mid_mo = c("29135", "29019", "29051", "29007", "29027", "29053", "29151", "29073", "29139"),
   ozark = c("29029", "29131", "29141", "29015", "29169", "29105", "29125", "29161", "29065"),
   ozark_mtns = c("29153", "29215", "29091", "29229", "29203", "29035", "29149", "29181", "29179", "29067"),
