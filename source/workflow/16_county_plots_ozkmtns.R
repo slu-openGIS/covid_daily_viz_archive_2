@@ -21,6 +21,14 @@ cols <- c("St. Louis" = values$pal[2],
 # define focal metros
 county_focal <- c("29189", "29511", regional_geoids$ozark_mtns)
 
+# define top_val new case rate plots
+top_case <- 50
+top_case_3wk <- 50
+
+round_peak <- 250
+custom_caption <- paste0(values$caption_text_census,"\nValues above 250 for Reynolds County truncated to increase readability")
+# custom_caption <- paste0(values$caption_text_census,"\nValues above 200 for Carter and Reynolds counties truncated to increase readability")
+
 # =============================================================================
 
 # create points
@@ -73,23 +81,11 @@ county_subset <- filter(county_data, report_date >= values$plot_date) %>%
 ## address negative values
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
-## modify Reynolds and Carter counties
-### Reynolds County
-county_subset <- mutate(county_subset,
-                        case_avg_rate = ifelse(geoid == 29179 & 
-                                                 (report_date == "2020-11-11" | report_date == "2020-11-17"), 200, case_avg_rate), # 240-300 - just switch back to 160
-                        case_avg_rate = ifelse(geoid == 29179 & 
-                                                 (report_date >= "2020-11-12" & report_date <= "2020-11-16"), NA, case_avg_rate))
-
-### Carter County
-county_subset <- mutate(county_subset,
-                        case_avg_rate = ifelse(geoid == 29035 & 
-                                                 (report_date == "2021-09-01" | report_date == "2021-09-07"), 200, case_avg_rate), 
-                        case_avg_rate = ifelse(geoid == 29035 & 
-                                                 (report_date >= "2021-09-02" & report_date <= "2021-09-06"), NA, case_avg_rate))
+## modify high peak counties
+county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate > round_peak, round_peak, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 25, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = top_case, f = ceiling)
 
 ## re-order counties
 counties <- unique(county_subset$county)
@@ -109,13 +105,13 @@ p <- facet_rate(county_subset,
                 subtype = "Ozark Mountains",
                 pal = cols, 
                 x_breaks = values$date_breaks_facet,
-                y_breaks = 25,
+                y_breaks = top_case,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$plot_date,
                 date = values$date,
                 title = "Pace of New COVID-19 Cases in Select Missouri Counties",
-                caption = paste0(values$caption_text_census,"\nValues above 200 for Carter and Reynolds counties truncated to increase readability"))
+                caption = custom_caption)
                    
 # values$caption_text_census
 
@@ -137,7 +133,7 @@ county_subset <- filter(county_data, report_date >= values$date-20) %>%
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 25, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = top_case_3wk, f = ceiling)
 
 ## re-order counties
 counties <- unique(county_subset$county)
@@ -157,7 +153,7 @@ p <- facet_rate(county_subset,
                 subtype = "Ozark Mountains",
                 pal = cols, 
                 x_breaks = values$date_breaks_3days,
-                y_breaks = 25,
+                y_breaks = top_case_3wk,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$date-20,
@@ -174,4 +170,4 @@ save_plots(filename = "results/low_res/county_ozkmtns/e_new_case_last21.png", pl
 
 # clean-up
 rm(county_data, county_subset, county_points, county_focal)
-rm(top_val, cols, p)
+rm(top_val, cols, p, top_case, top_case_3wk, round_peak, custom_caption)

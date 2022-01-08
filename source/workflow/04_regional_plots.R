@@ -114,7 +114,7 @@ os_values <- list(
   peak_x = -130, 
   peak_y = 200, 
   current_x = values$regional_current_x, 
-  current_y = -2000,
+  current_y = -3000,
   current_display = TRUE
 )
 
@@ -145,7 +145,7 @@ region_data %>%
   mutate(region = fct_relevel(region, "St. Louis", "Kansas City", "Outstate")) -> region_subset
 
 ## define top_val
-top_val <- round_any(x = max(region_subset$case_avg_rate), accuracy = 25, f = ceiling)
+top_val <- round_any(x = max(region_subset$case_avg_rate), accuracy = 50, f = ceiling)
 
 ## construct plot
 p <- ggplot() +
@@ -154,7 +154,7 @@ p <- ggplot() +
   scale_fill_manual(values = cols) +
   facet_wrap(vars(region), nrow = 3) +
   scale_x_date(date_breaks = values$date_breaks_long, date_labels = "%b") +
-  scale_y_continuous(limits = c(0,top_val), breaks = seq(0, top_val, by = 25)) + 
+  scale_y_continuous(limits = c(0,top_val), breaks = seq(0, top_val, by = 50)) + 
   labs(
     title = "Pace of New COVID-19 Cases in Missouri by Region",
     subtitle = paste0(as.character(values$plot_date), " through ", as.character(values$date)),

@@ -33,6 +33,10 @@ cols <- c("Kansas City" = values$pal[1], "Wyandotte" = values$pal[2],
 county_focal <- c("20209", "20103", "29511", "29107", "29095", "20091", "29047",
                   "29037", "29165", "29013", "29049", "29177") # 29025
 
+# define top_val new case rate plots
+top_case <- 25
+top_case_3wk <- 25
+
 ## create points
 county_points <- filter(county_data, report_date == values$date) %>%
   filter(geoid %in% county_focal)
@@ -114,7 +118,7 @@ county_subset <- mutate(county_subset,
 )
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate), accuracy = 20, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate), accuracy = top_case, f = ceiling)
 
 ## create factors
 county_subset <- mutate(county_subset, factor_var = fct_reorder2(county, report_date, case_avg_rate))
@@ -125,7 +129,7 @@ p <- facet_rate(county_subset,
                 subtype = "Kansas City",
                 pal = cols, 
                 x_breaks = values$date_breaks_facet,
-                y_breaks = 20,
+                y_breaks = top_case,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$plot_date,
@@ -151,7 +155,7 @@ county_subset <- filter(county_data, report_date >= values$date-20) %>%
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 20, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = top_case_3wk, f = ceiling)
 
 ## create factors
 county_subset <- mutate(county_subset, factor_var = fct_reorder2(county, report_date, case_avg_rate))
@@ -162,7 +166,7 @@ p <- facet_rate(county_subset,
                 subtype = "Kansas City",
                 pal = cols, 
                 x_breaks = values$date_breaks_3days,
-                y_breaks = 20,
+                y_breaks = top_case_3wk,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$date-20,
@@ -300,4 +304,4 @@ save_plots(filename = "results/low_res/kc_metro/m_case_fatality_rate.png", plot 
 # clean-up ####
 rm(kc_sf, county_focal, county_points, county_subset,
    county_data, county_day_points, alt_county_subset)
-rm(top_val, cols, p)
+rm(top_val, cols, p, top_case, top_case_3wk)

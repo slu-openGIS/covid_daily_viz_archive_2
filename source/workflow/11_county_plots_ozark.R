@@ -20,6 +20,10 @@ cols <- c("St. Louis City" = values$pal[1], "St. Louis" = values$pal[2],
 # define focal metros
 county_focal <- c("29510", "29189", "29511", regional_geoids$ozark)
 
+# define top_val new case rate plots
+top_case <- 50
+top_case_3wk <- 50
+
 # =============================================================================
 
 # create points
@@ -74,7 +78,7 @@ county_subset <- filter(county_data, report_date >= values$plot_date) %>%
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate), accuracy = 25, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate), accuracy = top_case, f = ceiling)
 
 ## re-order counties
 counties <- unique(county_subset$county)
@@ -94,7 +98,7 @@ p <- facet_rate(county_subset,
                 subtype = "Ozark",
                 pal = cols, 
                 x_breaks = values$date_breaks_facet,
-                y_breaks = 25,
+                y_breaks = top_case,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$plot_date,
@@ -120,7 +124,7 @@ county_subset <- filter(county_data, report_date >= values$date-20) %>%
 county_subset <- mutate(county_subset, case_avg_rate = ifelse(case_avg_rate < 0, 0, case_avg_rate))
 
 ## define top_val
-top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = 25, f = ceiling)
+top_val <- round_any(x = max(county_subset$case_avg_rate, na.rm = TRUE), accuracy = top_case_3wk, f = ceiling)
 
 ## re-order counties
 counties <- unique(county_subset$county)
@@ -140,7 +144,7 @@ p <- facet_rate(county_subset,
                 subtype = "Ozark",
                 pal = cols, 
                 x_breaks = values$date_breaks_3days,
-                y_breaks = 25,
+                y_breaks = top_case_3wk,
                 y_upper_limit = top_val,
                 highlight = county_focal,
                 plot_date = values$date-20,
@@ -157,4 +161,5 @@ save_plots(filename = "results/low_res/county_ozark/e_new_case_last21.png", plot
 
 # clean-up
 rm(county_data, county_subset, county_points, county_focal)
-rm(top_val, cols, p)
+rm(top_val, cols, p, top_case, top_case_3wk)
+
